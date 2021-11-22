@@ -73,7 +73,7 @@ internal class BetterPlayer(
     private val eventChannel: EventChannel,
     private val textureEntry: SurfaceTextureEntry,
     customDefaultLoadControl: CustomDefaultLoadControl?,
-    result: MethodChannel.Result, player: Player
+    result: MethodChannel.Result,
 ) {
     private val exoPlayer: ExoPlayer?
     private val eventSink = QueuingEventSink()
