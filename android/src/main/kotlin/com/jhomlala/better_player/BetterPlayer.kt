@@ -59,6 +59,7 @@ import com.google.android.exoplayer2.drm.DrmSessionManagerProvider
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
 import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.google.android.exoplayer2.util.Util
 import java.io.File
 import java.lang.Exception
@@ -74,7 +75,7 @@ internal class BetterPlayer(
     customDefaultLoadControl: CustomDefaultLoadControl?,
     result: MethodChannel.Result
 ) {
-    private val exoPlayer: SimpleExoPlayer?
+    private val exoPlayer: ExoPlayer?
     private val eventSink = QueuingEventSink()
     private val trackSelector: DefaultTrackSelector = DefaultTrackSelector(context)
     private val loadControl: LoadControl
@@ -103,7 +104,7 @@ internal class BetterPlayer(
             this.customDefaultLoadControl.bufferForPlaybackAfterRebufferMs
         )
         loadControl = loadBuilder.build()
-        exoPlayer = SimpleExoPlayer.Builder(context)
+        exoPlayer = ExoPlayer.Builder(context)
             .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
             .build()
@@ -304,7 +305,7 @@ internal class BetterPlayer(
         playerNotificationManager = PlayerNotificationManager.Builder(
             context,
             NOTIFICATION_ID,
-            playerNotificationChannelName!!,
+            playerNotificationChannelName ?: DEFAULT_NOTIFICATION_CHANNEL,
             mediaDescriptionAdapter
         ).build()
         playerNotificationManager!!.setPlayer(exoPlayer)
@@ -471,13 +472,13 @@ internal class BetterPlayer(
         return when (type) {
             C.TYPE_SS -> SsMediaSource.Factory(
                 DefaultSsChunkSource.Factory(mediaDataSourceFactory),
-                DefaultDataSourceFactory(context, null, mediaDataSourceFactory)
+                DefaultDataSource.Factory(context, mediaDataSourceFactory)
             )
                 .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
             C.TYPE_DASH -> DashMediaSource.Factory(
                 DefaultDashChunkSource.Factory(mediaDataSourceFactory),
-                DefaultDataSourceFactory(context, null, mediaDataSourceFactory)
+                DefaultDataSource.Factory(context, mediaDataSourceFactory)
             )
                 .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
@@ -564,15 +565,14 @@ internal class BetterPlayer(
         }
     }
 
-    private fun setAudioAttributes(exoPlayer: SimpleExoPlayer?, mixWithOthers: Boolean) {
-        val audioComponent = exoPlayer!!.audioComponent ?: return
+    private fun setAudioAttributes(exoPlayer: ExoPlayer?, mixWithOthers: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            audioComponent.setAudioAttributes(
+            exoPlayer?.setAudioAttributes(
                 AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MOVIE).build(),
                 !mixWithOthers
             )
         } else {
-            audioComponent.setAudioAttributes(
+            exoPlayer?.setAudioAttributes(
                 AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MUSIC).build(),
                 !mixWithOthers
             )
@@ -672,11 +672,11 @@ internal class BetterPlayer(
         val mediaButtonReceiver = ComponentName(context!!, MediaButtonReceiver::class.java)
         val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
         val pendingIntent = PendingIntent.getBroadcast(
-            context!!,
+            context,
             0, mediaButtonIntent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        val mediaSession = MediaSessionCompat(context!!, TAG, null, pendingIntent)
+        val mediaSession = MediaSessionCompat(context, TAG, null, pendingIntent)
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
             override fun onSeekTo(pos: Long) {
                 sendSeekToEvent(pos)

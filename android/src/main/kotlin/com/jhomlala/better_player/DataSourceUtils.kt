@@ -18,7 +18,7 @@ internal object DataSourceUtils {
                 userAgent = userAgentHeader
             }
         }
-        return userAgent
+        return userAgent!!
     }
 
     @JvmStatic
@@ -34,9 +34,7 @@ internal object DataSourceUtils {
         if (headers != null) {
             val notNullHeaders = mutableMapOf<String, String>()
             headers.forEach { entry ->
-                if (entry.key != null && entry.value != null) {
-                    notNullHeaders[entry.key!!] = entry.value!!
-                }
+                notNullHeaders[entry.key] = entry.value
             }
             (dataSourceFactory as DefaultHttpDataSource.Factory).setDefaultRequestProperties(
                 notNullHeaders
