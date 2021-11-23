@@ -3,15 +3,14 @@ package com.jhomlala.better_player
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import com.jhomlala.better_player.DataSourceUtils.isHTTP
-import com.jhomlala.better_player.DataSourceUtils.getUserAgent
-import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
-import androidx.work.WorkerParameters
-import com.google.android.exoplayer2.upstream.cache.CacheWriter
 import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSourceException
-import java.lang.Exception
+import com.google.android.exoplayer2.upstream.cache.CacheWriter
+import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
+import com.jhomlala.better_player.DataSourceUtils.getUserAgent
+import com.jhomlala.better_player.DataSourceUtils.isHTTP
 import java.util.*
 
 /**
