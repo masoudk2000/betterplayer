@@ -716,19 +716,10 @@ internal class BetterPlayer(
         if (mappedTrackInfo != null) {
             val builder = trackSelector.buildUponParameters()
 
-            val tracks = intArrayOf(groupElementIndex)
-            val override = SelectionOverride(groupIndex, *tracks)
-
             val a = TrackSelectionOverrides.Builder()
-                .setOverrideForType(TrackSelectionOverrides.TrackSelectionOverride(mappedTrackInfo.getTrackGroups(rendererIndex).get(groupIndex)))
+                .setOverrideForType(TrackSelectionOverrides.TrackSelectionOverride(mappedTrackInfo.getTrackGroups(rendererIndex).get(groupElementIndex)))
                 .build()
-
             builder.setTrackSelectionOverrides(a)
-
-//            builder.setSelectionOverride(
-//                rendererIndex,
-//                mappedTrackInfo.getTrackGroups(rendererIndex), override
-//            )
             trackSelector.setParameters(builder)
         }
     }
