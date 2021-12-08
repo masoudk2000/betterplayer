@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback
 import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter
@@ -713,15 +714,21 @@ internal class BetterPlayer(
     private fun setAudioTrack(rendererIndex: Int, groupIndex: Int, groupElementIndex: Int) {
         val mappedTrackInfo = trackSelector.currentMappedTrackInfo
         if (mappedTrackInfo != null) {
-            val builder = trackSelector.parameters.buildUpon()
-            builder.clearSelectionOverrides(rendererIndex)
-                .setRendererDisabled(rendererIndex, false)
+            val builder = trackSelector.buildUponParameters()
+
             val tracks = intArrayOf(groupElementIndex)
             val override = SelectionOverride(groupIndex, *tracks)
-            builder.setSelectionOverride(
-                rendererIndex,
-                mappedTrackInfo.getTrackGroups(rendererIndex), override
-            )
+
+            val a = TrackSelectionOverrides.Builder()
+                .setOverrideForType(TrackSelectionOverrides.TrackSelectionOverride(mappedTrackInfo.getTrackGroups(rendererIndex).get(groupIndex)))
+                .build()
+
+            builder.setTrackSelectionOverrides(a)
+
+//            builder.setSelectionOverride(
+//                rendererIndex,
+//                mappedTrackInfo.getTrackGroups(rendererIndex), override
+//            )
             trackSelector.setParameters(builder)
         }
     }
