@@ -469,6 +469,12 @@ enum VideoEventType {
 
   /// An unknown event has been received.
   unknown,
+
+  /// Fastforward 15 sec
+  fastForward,
+
+  /// Fastrewind 15 sec
+  fastRewind,
 }
 
 /// Describes a discrete segment of time within a video using a [start] and

@@ -128,8 +128,8 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.togglePlayPauseCommand setEnabled:YES];
     [commandCenter.playCommand setEnabled:YES];
     [commandCenter.pauseCommand setEnabled:YES];
-    [commandCenter.nextTrackCommand setEnabled:NO];
-    [commandCenter.previousTrackCommand setEnabled:NO];
+    [commandCenter.nextTrackCommand setEnabled:YES;
+    [commandCenter.previousTrackCommand setEnabled:YES];
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand setEnabled:YES];
     }
@@ -159,7 +159,19 @@ bool _remoteCommandsInitialized = false;
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 
+    [commandCenter.nextTrackCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        if (_notificationPlayer != [NSNull null]){
+            _notificationPlayer.eventSink(@{@"event" : @"forward"});
+        }
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
 
+    [commandCenter.previousTrackCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+            if (_notificationPlayer != [NSNull null]){
+                _notificationPlayer.eventSink(@{@"event" : @"previuos"});
+            }
+            return MPRemoteCommandHandlerStatusSuccess;
+    }];
 
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
@@ -388,6 +400,12 @@ bool _remoteCommandsInitialized = false;
             result(nil);
         } else if ([@"pause" isEqualToString:call.method]) {
             [player pause];
+            result(nil);
+        } else if ([@"previuos" isEqualToString:call.method]) {
+            [player previousTrackCommand];
+            result(nil);
+        }else if ([@"forward" isEqualToString:call.method]) {
+            [player nextTrackCommand];
             result(nil);
         } else if ([@"setSpeed" isEqualToString:call.method]) {
             [player setSpeed:[[argsMap objectForKey:@"speed"] doubleValue] result:result];

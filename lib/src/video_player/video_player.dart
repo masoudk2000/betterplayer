@@ -246,6 +246,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.pause:
           pause();
           break;
+        case VideoEventType.fastForward:
+          fastForward();
+          break;
+        case VideoEventType.fastRewind:
+          fastRewind();
+          break;
         case VideoEventType.seek:
           seekTo(event.position);
           break;
@@ -449,6 +455,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
     await _applyPlayPause();
+  }
+
+  /// forward the video.
+  Future<void> fastForward() async {
+    await seekTo(Duration(seconds: value.position.inMilliseconds+15));
+  }
+
+  /// rewind the video.
+  Future<void> fastRewind() async {
+    await seekTo(Duration(seconds: value.position.inMilliseconds-15));
   }
 
   Future<void> _applyLooping() async {

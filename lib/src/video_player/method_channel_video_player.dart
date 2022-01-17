@@ -390,7 +390,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.pause,
             key: key,
           );
-
+        case 'previuos':
+          return VideoEvent(
+            eventType: VideoEventType.fastRewind,
+            key: key,
+          );
+        case 'forward':
+          return VideoEvent(
+            eventType: VideoEventType.fastForward,
+            key: key,
+          );
         case 'seek':
           return VideoEvent(
             eventType: VideoEventType.seek,
