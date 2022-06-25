@@ -4,7 +4,6 @@ import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   BetterPlayerCupertinoVideoProgressBar(
@@ -37,8 +36,7 @@ class _VideoProgressBarState
     extends State<BetterPlayerCupertinoVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
-      if (mounted)
-        setState(() {});
+      if (mounted) setState(() {});
     };
   }
 
@@ -70,7 +68,7 @@ class _VideoProgressBarState
   @override
   Widget build(BuildContext context) {
     final bool enableProgressBarDrag = betterPlayerController!
-        .betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
+        .betterPlayerControlsConfiguration.enableProgressBarDrag;
     return GestureDetector(
       onHorizontalDragStart: (DragStartDetails details) {
         if (!controller!.value.initialized || !enableProgressBarDrag) {
@@ -214,19 +212,8 @@ class _ProgressBarPainter extends CustomPainter {
     if (!value.initialized) {
       return;
     }
-    double playedPartPercent = 0;
-    if (value.duration!.inSeconds == 0)
-      {
-        if (value.buffered.isNotEmpty) {
-          DurationRange range = value.buffered.first;
-          playedPartPercent =
-              value.position.inMilliseconds /
-                  range.end.inMilliseconds;
-        }
-      }else {
-      playedPartPercent =
-          value.position.inMilliseconds / value.duration!.inMilliseconds;
-    }
+    final double playedPartPercent =
+        value.position.inMilliseconds / value.duration!.inMilliseconds;
     final double playedPart =
         playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
     for (final DurationRange range in value.buffered) {
