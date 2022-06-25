@@ -1,3 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.jhomlala.better_player">
+
+    <application
+        android:name="${applicationName}" >
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+
 </manifest>
